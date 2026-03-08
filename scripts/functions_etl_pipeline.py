@@ -10,20 +10,22 @@ from progress.bar import Bar
 ####### Extracting #######
 def extract_data():
     # Connecting to the MongoDB server
-    conn = MongoClient('mongodb://localhost:27017')
+    conn = MongoClient(
+        'mongodb://admin:secret@localhost:27017/?authSource=admin'
+    )
     
     # Accessing to the target database
     db_conn = conn['TheMovieDB']
     
-    # Accessing to the trackers collection
-    cl_Trackers = db_conn['Trackers']
+    # Accessing to the Audit collection
+    cl_Audit = db_conn['Audit']
     
     # Retrieving the last processed batch
     last_processed_batch = 0
-    if cl_Trackers.count_documents({}) > 0:
-        trackers = cl_Trackers.find().sort('_id',-1).limit(1)
-        for tracker in trackers:
-            last_processed_batch = tracker.get('last_processed_batch')
+    if cl_Audit.count_documents({}) > 0:
+        Records_Audit = cl_Audit.find().sort('_id',-1).limit(1)
+        for Record_Audit in Records_Audit:
+            last_processed_batch = Record_Audit.get('last_processed_batch')
     
     # Closing the connection
     conn.close()
